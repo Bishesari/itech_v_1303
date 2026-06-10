@@ -59,4 +59,11 @@ class User extends Authenticatable implements PasskeyUser
             ->map(fn ($word) => Str::substr($word, 0, 1))
             ->implode('');
     }
+
+    public function contacts()
+    {
+        return $this->belongsToMany(Contact::class)
+            ->withPivot('is_primary')
+            ->withTimestamps();
+    }
 }
