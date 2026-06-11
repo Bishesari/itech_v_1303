@@ -43,7 +43,7 @@ new class extends Component
                     $this->redirectIntended('dashboard', navigate: true);
                 }
             } else {
-                $this->redirectRoute('role.select', navigate: true);
+                $this->redirectRoute('select-role', navigate: true);
             }
             return;
         }

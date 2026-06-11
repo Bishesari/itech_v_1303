@@ -13,19 +13,19 @@ return new class extends Migration
     {
         Schema::create('roles', function (Blueprint $table) {
 
-        $table->id();
+            $table->id();
 
-        $table->string('slug', 50)->unique();
-        $table->string('name', 50);
+            $table->string('slug', 50)->unique();
+            $table->string('name', 50);
 
-        $table->enum('scope', ['system', 'institute', 'branch'])->index();
+            $table->enum('scope', ['system', 'institute', 'branch'])->index();
 
-        $table->string('color', 20)->nullable();
+            $table->string('color', 20)->nullable();
 
-        $table->boolean('is_active')->default(true)->index();
+            $table->boolean('is_active')->default(true)->index();
 
-        $table->timestamps();
-    });
+            $table->timestamps();
+        });
 
     }
 
