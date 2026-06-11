@@ -12,7 +12,8 @@
         </x-slot>
     </flux:brand>
     <flux:navbar class="-mb-px max-lg:hidden">
-        <flux:navbar.item icon="home" href="#" current>Home</flux:navbar.item>
+        <flux:navbar.item icon="home" :href="route('home')" :current="request()->routeIs('home')" wire:navigate>{{ __('صفحه اول') }}</flux:navbar.item>
+
         <flux:navbar.item icon="inbox" badge="12" href="#">Inbox</flux:navbar.item>
         <flux:navbar.item icon="document-text" href="#">Documents</flux:navbar.item>
         <flux:navbar.item icon="calendar" href="#">Calendar</flux:navbar.item>
@@ -34,17 +35,35 @@
         <flux:button x-data x-on:click="$flux.dark = ! $flux.dark" icon="moon" variant="subtle" inset class="cursor-pointer"/>
         </flux:navbar>
 
-    <flux:dropdown position="top" align="start">
-        <flux:profile avatar="https://fluxui.dev/img/demo/user.png" />
-        <flux:menu>
-            <flux:menu.radio.group>
-                <flux:menu.radio checked>Olivia Martin</flux:menu.radio>
-                <flux:menu.radio>Truly Delta</flux:menu.radio>
-            </flux:menu.radio.group>
-            <flux:menu.separator />
-            <flux:menu.item icon="arrow-right-start-on-rectangle">Logout</flux:menu.item>
-        </flux:menu>
-    </flux:dropdown>
+
+    @auth()
+        <flux:dropdown position="top" align="start">
+            <flux:profile avatar="https://fluxui.dev/img/demo/user.png" />
+            <flux:menu>
+                <flux:menu.radio.group>
+                    <flux:menu.radio checked>Olivia Martin</flux:menu.radio>
+                    <flux:menu.radio>Truly Delta</flux:menu.radio>
+                </flux:menu.radio.group>
+                <flux:menu.separator />
+                <flux:menu.item icon="arrow-right-start-on-rectangle">Logout</flux:menu.item>
+            </flux:menu>
+        </flux:dropdown>
+    @endauth
+
+    {{---------- Login Button ----------}}
+    <flux:modal.trigger name="login">
+        <flux:button variant="subtle" size="sm" class="cursor-pointer">
+            {{__('ورود')}}
+        </flux:button>
+    </flux:modal.trigger>
+
+    {{---------- Login Modal ----------}}
+    <flux:modal name="login" class="w-96" focusable :dismissible="false">
+        <livewire:auth.login context="modal"/>
+    </flux:modal>
+
+
+
 </flux:header>
 <flux:sidebar sticky collapsible="mobile" class="lg:hidden bg-zinc-50 dark:bg-zinc-900 border-r border-zinc-200 dark:border-zinc-700">
     <flux:sidebar.header>
