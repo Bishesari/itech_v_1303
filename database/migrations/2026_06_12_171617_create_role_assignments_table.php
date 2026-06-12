@@ -11,31 +11,22 @@ return new class extends Migration
      */
     public function up(): void
     {
-       Schema::create('user_role', function (Blueprint $table) {
-
+        Schema::create('role_assignments', function (Blueprint $table) {
             $table->id();
-
-            $table->foreignId('institute_id')->nullable()->constrained()->cascadeOnDelete();
-
-            $table->foreignId('branch_id')->nullable()->constrained()->cascadeOnDelete();
-
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-
             $table->foreignId('role_id')->constrained()->cascadeOnDelete();
-
-            $table->boolean('is_last_selected')->default(false)->index();
-            $table->boolean('is_active')->default(true)->index();
-
+            $table->foreignId('institute_id')->nullable()->constrained()->cascadeOnDelete();
+            $table->foreignId('branch_id')->nullable()->constrained()->cascadeOnDelete();
             $table->foreignId('assigned_by_id')->nullable()->constrained('users')->nullOnDelete();
-
+            $table->boolean('is_active')->default(true)->index();
             $table->timestamps();
-
-            $table->unique(['institute_id', 'branch_id', 'user_id', 'role_id'], 'unique_role_assignment');
-
+            $table->unique(['user_id', 'role_id', 'institute_id', 'branch_id',], 'unique_role_assignment');
+            
             $table->index('user_id');
             $table->index('role_id');
+            $table->index(['institute_id', 'branch_id']);
+            $table->index(['user_id', 'is_active']);
         });
-
     }
 
     /**
@@ -43,6 +34,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('user_role');
+        Schema::dropIfExists('role_assignments');
     }
 };
