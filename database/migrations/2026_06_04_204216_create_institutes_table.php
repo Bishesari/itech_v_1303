@@ -18,16 +18,16 @@ return new class extends Migration
             // اطلاعات اصلی
             $table->string('short_name', 30);
             $table->string('full_name', 100);
-            $table->string('slug', 50)->unique();
 
+            $table->string('slug', 50)->unique();
             // کد اختصاری یکتا برای سیستم
             $table->char('abbr', 5)->unique(); // مثلا: KAA, TCI, ALF01
 
-            // وضعیت فعال بودن موسسه
-            $table->boolean('is_active')->default(true)->index();
-
             // لوگو
             $table->string('logo_url')->nullable(); // 255 پیشفرض
+
+            // وضعیت فعال بودن موسسه
+            $table->boolean('is_active')->default(true)->index();
 
             $table->timestamps();
         });
