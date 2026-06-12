@@ -1,54 +1,71 @@
 <?php
-
 use Livewire\Component;
-
 new class extends Component
 {
-    public string $context = 'modal'; // modal | page
     public string $user_name = '';
     public string $password = '';
     public bool $remember = false;
 
-    public function mount(string $context = 'modal'): void
-    {
-        $this->context = $context;
-    }
     public function login(): void
     {
-        if (! session()->has('url.intended')) {
-            session(['url.intended' => url()->previous()]);
-        }
-        $key = Str::lower($this->user_name ?: 'guest') . '|' . request()->ip();
+        $this->validate([
+        'user_name' => ['required', 'string', 'max:25'],
+        'password' => ['required', 'string'],
+        ]);
+        
+        $key = sprintf('login:%s:%s',Str::lower($this->user_name), request()->ip());
+
         if (RateLimiter::tooManyAttempts($key, 5)) {
-            $this->addError('user_name', 'تلاش‌های ناموفق زیاد! یک دقیقه دیگر تلاش کنید.');
-            return;
-        }
+            $seconds = RateLimiter::availableIn($key);
+            $this->addError(
+                'user_name', "تعداد تلاش‌های ناموفق زیاد است. {$seconds} ثانیه دیگر تلاش کنید."
+            );
+        return;
+    }
 
-        if (Auth::attempt(['user_name' => $this->user_name, 'password' => $this->password], $this->remember)) {
+    $credentials = [
+        'user_name' => $this->user_name,
+        'password' => $this->password,
+        ];
 
-            session()->regenerate();
+    if (! Auth::attempt($credentials, $this->remember)) {
 
-            RateLimiter::clear($key);
-            $roles = Auth::user()->getAllRolesWithBranches();
-            if ($roles->count() === 1) {
-                $role = $roles->first();
-                session([
-                    'active_role_id' => $role->role_id,
-                    'active_branch_id' => $role->branch_id, // null برای global
-                    'color' => $role->role_color
-                ]);
-                if ($this->context === 'modal') {
-                    $this->redirectIntended(route('home'), navigate: true);
-                } else {
-                    $this->redirectIntended('dashboard', navigate: true);
-                }
-            } else {
-                $this->redirectRoute('select-role', navigate: true);
-            }
-            return;
-        }
-        RateLimiter::hit($key);
-        $this->addError('password', 'نام کاربری یا رمز عبور اشتباه است.');
+        RateLimiter::hit($key, 60);
+
+        $this->addError(
+            'password',
+            'نام کاربری یا رمز عبور اشتباه است.'
+        );
+
+        return;
+    }
+
+    $user = Auth::user();
+
+    if (! $user->is_active) {
+
+        Auth::logout();
+
+        session()->invalidate();
+        session()->regenerateToken();
+
+        $this->addError(
+            'user_name',
+            'حساب کاربری شما غیرفعال شده است.'
+        );
+
+        return;
+    }
+
+    session()->regenerate();
+
+    RateLimiter::clear($key);
+
+    $user->update([
+        'last_login_at' => now(),
+    ]);
+
+    $this->redirectRoute('select-role', navigate: true);
     }
 };
 ?>
@@ -84,7 +101,7 @@ new class extends Component
         </div>
     </form>
 
-    @if($context === 'modal')
+   
         <div class="space-x-1 text-sm text-center rtl:space-x-reverse text-zinc-600 dark:text-zinc-400 mt-4">
             <span>{{ __('حساب کاربری ندارید؟') }}</span>
             <flux:modal.trigger name="register">
@@ -93,13 +110,13 @@ new class extends Component
                              class="cursor-pointer">{{ __('ثبت نام کنید.') }}</flux:button>
             </flux:modal.trigger>
         </div>
-    @else
+  
         <div class="space-x-1 text-sm text-center rtl:space-x-reverse text-zinc-600 dark:text-zinc-400 mt-4">
             <span>{{ __('حساب کاربری ندارید؟') }}</span>
             <flux:button :href="route('register')" wire:navigate variant="ghost" icon:trailing="arrow-up-left" size="sm"
                          class="cursor-pointer">{{ __('ثبت نام کنید.') }}
             </flux:button>
         </div>
-    @endif
+   
 
 </div>

@@ -25,8 +25,8 @@ class RoleSeeder extends Seeder
             ['slug' => 'founder',      'name' => 'موسس',        'scope' => 'institute', 'color' => 'teal', 'is_active' => true],
 
             // --- BRANCH ROLES (Access specific to one Branch) ---
-            ['slug' => 'manager',      'name' => 'مدیر',        'scope' => 'branch', 'color' => 'indigo',  'is_active' => true],
-            ['slug' => 'assistant',    'name' => 'مسئول اداری', 'scope' => 'branch', 'color' => 'fuchsia', 'is_active' => true],
+            ['slug' => 'branch-manager',      'name' => 'مدیر شعبه',        'scope' => 'branch', 'color' => 'indigo',  'is_active' => true],
+            ['slug' => 'office-assistant',    'name' => 'مسئول اداری', 'scope' => 'branch', 'color' => 'fuchsia', 'is_active' => true],
             ['slug' => 'accountant',   'name' => 'حسابدار',     'scope' => 'branch', 'color' => 'orange',  'is_active' => true],
             ['slug' => 'teacher',      'name' => 'مربی',        'scope' => 'branch', 'color' => 'amber',   'is_active' => true],
             ['slug' => 'student',      'name' => 'کارآموز',     'scope' => 'branch', 'color' => 'lime',    'is_active' => true],

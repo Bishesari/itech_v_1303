@@ -59,7 +59,7 @@
 
     {{---------- Login Modal ----------}}
     <flux:modal name="login" class="w-96" focusable :dismissible="false">
-        <livewire:auth.login context="modal"/>
+        <livewire:auth.login/>
     </flux:modal>
 
 

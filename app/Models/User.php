@@ -12,12 +12,11 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Laravel\Fortify\Contracts\PasskeyUser;
 use Laravel\Fortify\PasskeyAuthenticatable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * @property int $id
@@ -76,20 +75,8 @@ class User extends Authenticatable implements PasskeyUser
         return $this->hasOne(Profile::class);
     }
 
-    public function getAllRolesWithBranches(): Collection
+    public function roleAssignments(): HasMany
     {
-        return DB::table('user_role')
-            ->join('roles', 'user_role.role_id', '=', 'roles.id')
-            ->leftJoin('branches', 'user_role.branch_id', '=', 'branches.id')
-            ->where('user_role.user_id', $this->id)
-            ->select(
-                'user_role.id',
-                'roles.id as role_id',
-                'roles.name as role_name',
-                'branches.id as branch_id',
-                'branches.short_name as branch_name',
-                'roles.color as role_color'
-            )
-            ->get();
+        return $this->hasMany(RoleAssignment::class);
     }
 }
